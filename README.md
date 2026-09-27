@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/wordmark.svg" alt="Mola" width="320">
+</p>
+
 # Mola
 
 A portrait 3D café tycoon for Android. Serve customers, hire staff, add seating and grow one café into a small chain. English and Turkish.
