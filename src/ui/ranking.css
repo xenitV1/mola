@@ -1,0 +1,20 @@
+.cafe-ranking{--league-green:#365941;--league-cream:#fff9ed;--league-ink:#493a2c;--league-gold:#ad7c29;color:var(--league-ink)}
+.ranking-hero{display:flex;align-items:center;gap:16px;background:var(--league-green);color:var(--league-cream);padding:24px 20px;border-radius:22px;border-bottom:5px solid #25442f}
+.ranking-emblem{display:grid;place-items:center;width:60px;height:60px;flex-shrink:0;background:#efd8a0;border-radius:50%;color:#5d4328;box-shadow:0 0 0 5px #ffffff14}
+.ranking-emblem svg{width:34px;height:34px}.ranking-eyebrow{font-size:.7rem;font-weight:900;letter-spacing:.1em}
+.ranking-hero h3{font-size:1.5rem;color:inherit;margin:6px 0}.ranking-hero p{margin:0;font-size:.8rem;line-height:1.5;color:#eee4cd}
+.ranking-description,.ranking-footnote{font-size:.8rem;line-height:1.6;color:#735f49;margin:18px 0}
+.ranking-list{list-style:none;padding:0;margin:0;display:grid;gap:9px}
+.ranking-row{display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:center;gap:10px;padding:13px 12px;border:1px solid #deceb1;border-radius:15px;background:var(--league-cream)}
+.ranking-place{display:grid;place-items:center;font-size:.9rem;font-weight:900;min-width:34px;min-height:34px;border-radius:50%;background:#eee5d4;color:#69563c}
+.ranking-medal .ranking-place{background:#f4d281;color:#674c22;border:2px solid #b68839}.medal-2 .ranking-place{background:#e4e7df;border-color:#a5ada6}.medal-3 .ranking-place{background:#e7c2a5;border-color:#b38360}
+.ranking-player{display:flex;align-items:flex-start;flex-direction:column;gap:4px;min-width:0}.ranking-player b{font-size:.9rem;line-height:1.4;overflow-wrap:anywhere;unicode-bidi:plaintext;max-width:100%}
+.ranking-points{text-align:end;display:grid;gap:3px}.ranking-points strong{font-size:.9rem;white-space:nowrap;font-variant-numeric:tabular-nums}.ranking-points>span{font-size:.65rem;color:#76634e}
+.ranking-you{border:2px solid #63855b;background:#eef3e5}.ranking-you-label{font-size:.65rem;font-weight:900;background:var(--league-green);color:white;padding:2px 8px;border-radius:6px}
+.ranking-message{border:1px dashed #c3ae85;border-radius:14px;padding:20px;background:#fff8e6;line-height:1.6;font-size:.9rem;margin:14px 0}
+.cafe-ranking>.primary{margin-top:20px;min-height:48px}.cafe-ranking>.link-button{min-height:48px}
+html[data-large-text="true"] .ranking-row{grid-template-columns:44px minmax(0,1fr)}
+html[data-large-text="true"] .ranking-points{grid-column:2;text-align:start}
+html[data-large-text="true"] .ranking-hero{align-items:flex-start;flex-direction:column}
+.ranking-row{gap:clamp(7px,1cqw,10px)}
+.ranking-emblem{width:clamp(44px,5cqw,60px);height:clamp(44px,5cqw,60px)}

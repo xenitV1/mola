@@ -1,0 +1,45 @@
+.sheet[data-panel-name="celebration"]{--award-gold:#e7b63d;--award-ink:#57391c;--award-cream:#fff6df;width:min(440px,calc(100% - 24px));margin:auto;max-height:calc(100dvh - 32px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));border:2px solid #f1d393;border-radius:30px;background:radial-gradient(ellipse at 50% 12%,#fffdf0 0,#fff3d6 65%,#f6e2b8 100%);box-shadow:0 14px 50px #39280f55,0 0 0 5px #fff7e31f;overflow:hidden}
+.sheet[data-panel-name="celebration"] .handle{display:none}
+.sheet[data-panel-name="celebration"]>header{border-bottom:0;padding:12px 14px 0 20px;align-items:center}
+.sheet[data-panel-name="celebration"]>header h2{font-size:.95rem;color:#745331}
+.sheet[data-panel-name="celebration"]>header .icon-button{background:#ead8b560;border-radius:50%}
+.sheet[data-panel-name="celebration"] .sheet-body{padding:0 22px 22px;overflow-x:hidden}
+.star-celebration{position:relative;text-align:center;color:var(--award-ink);isolation:isolate}
+.celebration-eyebrow{position:relative;font-size:.8rem;margin:6px 0 20px;letter-spacing:.045em;color:#795b36}
+.celebration-stars{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;margin:14px auto 12px;filter:drop-shadow(0 5px 0 #b58b3c33)}
+.celebration-stars span{display:block;color:#d0bc97;transform:rotate(-8deg)}
+.celebration-stars span:nth-child(2){transform:translateY(-10px)}
+.celebration-stars span:nth-child(3){transform:rotate(8deg)}
+.celebration-stars svg{width:66px;height:66px;stroke-width:1.25;fill:#ecdfc3}
+.celebration-stars .earned{color:#98630e}
+.celebration-stars .earned svg{fill:#f5ca50}
+.celebration-stars .new-star svg{animation:award-star .8s cubic-bezier(.2,.85,.3,1.2) both;animation-delay:var(--star-delay)}
+.celebration-count{font-size:.7rem;letter-spacing:.18em;color:#85602c;margin:16px 0 12px}
+.star-celebration h3{font-size:1.85rem;line-height:1.12;font-weight:900;max-width:330px;margin:0 auto 12px;text-wrap:balance;overflow-wrap:anywhere}
+.celebration-message{font-size:.9rem;line-height:1.5;max-width:290px;margin:0 auto 20px;color:#796044;text-wrap:balance}
+.celebration-reward{position:relative;background:#ffffff70;border:1px solid #d9bc7d;border-radius:18px;padding:14px 10px;margin:18px 0}
+.celebration-reward>span{display:block;font-size:.72rem;color:#785b35;margin-bottom:5px}
+.celebration-reward strong{display:flex;justify-content:center;align-items:center;gap:7px;flex-wrap:wrap;font-size:2rem;font-weight:900;line-height:1.2}
+.celebration-reward svg{width:32px;height:32px;fill:#f5cc5c;color:#946016}
+.celebration-reward small{font-size:.8rem;align-self:center}
+.star-celebration>.primary{position:relative;width:100%;font-size:1rem;min-height:54px;border-radius:16px;margin-bottom:4px;display:flex;justify-content:center;align-items:center;gap:10px}
+.celebration-medal{position:relative;display:grid;place-items:center;width:106px;height:106px;margin:0 auto 18px;border:5px double #a87a22;border-radius:50%;background:linear-gradient(145deg,#ffeba2,#edc35a 60%,#d49b2c);box-shadow:0 5px 0 #aa792633,0 0 0 9px #e9c46c33;animation:award-star .8s ease-out both}
+.celebration-medal:before,.celebration-medal:after{content:'';position:absolute;z-index:-1;bottom:-19px;width:25px;height:45px;background:#79935d;clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%);transform:rotate(17deg);left:19px}
+.celebration-medal:after{left:auto;right:19px;transform:rotate(-17deg)}
+.celebration-medal svg{width:50px;height:50px;color:#825119;stroke-width:1.5}
+.grand-finale .celebration-stars svg{width:52px;height:52px}
+.grand-finale .celebration-eyebrow{margin-bottom:16px}
+.grand-finale .celebration-stars{margin-top:23px}
+.grand-finale .celebration-message{margin-bottom:10px}
+.celebration-ribbon{display:inline-block;background:#657e49;color:#fff9e5;border:1px solid #526a39;letter-spacing:.11em;font-size:.64rem;padding:8px 14px;border-radius:6px}
+.celebration-confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:2}
+.celebration-confetti i{position:absolute;left:50%;top:70px;width:7px;height:12px;border-radius:2px;opacity:0;animation:award-confetti 2.2s cubic-bezier(.12,.6,.35,1) both;animation-delay:var(--delay);will-change:transform,opacity}
+.celebration-confetti i:nth-child(3n){width:8px;height:8px;border-radius:50%}
+.grand-finale .celebration-confetti i{top:115px;animation-duration:2.8s}
+@keyframes award-star{0%{transform:scale(.3) rotate(-20deg);opacity:0}60%{transform:scale(1.16) rotate(5deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes award-confetti{0%{transform:translate3d(0,0,0) rotate(0);opacity:0}9%{opacity:1}45%{transform:translate3d(calc(var(--x)*.8),-85px,0) rotate(calc(var(--r)*.4));opacity:1}100%{transform:translate3d(var(--x),var(--y),0) rotate(var(--r));opacity:0}}
+html[data-motion="off"] .celebration-confetti{display:none}
+@media(prefers-reduced-motion:reduce){.celebration-confetti{display:none}}
+.celebration-medal{width:clamp(74px,10dvh,106px);height:clamp(74px,10dvh,106px)}
+.celebration-stars svg{width:clamp(52px,7dvh,66px);height:clamp(52px,7dvh,66px)}
+.star-celebration h3{font-size:clamp(1.5rem,3.5dvh,1.85rem)}

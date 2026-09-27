@@ -1,0 +1,144 @@
+import java.util.Locale
+apply plugin: 'com.android.application'
+
+def cafeAds = new groovy.json.JsonSlurper().parse(file('../../admob.config.json'))
+def cafeBilling = new groovy.json.JsonSlurper().parse(file('../../billing.config.json'))
+def molaGames = new groovy.json.JsonSlurper().parse(file('../../play-games.config.json'))
+def molaGamesConfigured = (molaGames.projectId ==~ /\d+/) && (molaGames.leaderboardId ==~ /[A-Za-z0-9_-]{8,}/)
+def cafeSampleApp = 'ca-app-pub-3940256099942544~3347511713'
+def cafeSampleReward = 'ca-app-pub-3940256099942544/5224354917'
+def cafeSampleInterstitial = 'ca-app-pub-3940256099942544/1033173712'
+def cafeSigningFile = file(System.getenv('CAFE_SIGNING_PROPERTIES') ?: System.getProperty('user.home') + '/.local/share/minik-mola/signing.properties')
+def cafeSigning = new Properties()
+if (cafeSigningFile.exists()) cafeSigningFile.withInputStream { cafeSigning.load(it) }
+def molaReviewFile = file(System.getenv('MOLA_REVIEW_ACCESS_PROPERTIES') ?: System.getProperty('user.home') + '/.local/share/mola/secrets/review-access.properties')
+def molaReview = new Properties()
+if (molaReviewFile.exists()) molaReviewFile.withInputStream { molaReview.load(it) }
+def molaReviewDigest = molaReview.getProperty('codeSha256', '')
+if (!(molaReviewDigest ==~ /[a-f0-9]{64}/)) molaReviewDigest = ''
+
+android {
+    namespace "com.example.mola"
+    buildFeatures { buildConfig true }
+    compileSdk rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "com.example.mola"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        manifestPlaceholders = [admobAppId: cafeAds.appId]
+        buildConfigField 'boolean', 'ADMOB_TEST', 'false'
+        buildConfigField 'String', 'REVIEW_ACCESS_SHA256', groovy.json.JsonOutput.toJson(molaReviewDigest)
+        buildConfigField 'String', 'ADMOB_APP_ID', '"' + cafeAds.appId + '"'
+        buildConfigField 'String', 'ADMOB_INTERSTITIAL', groovy.json.JsonOutput.toJson(cafeAds.interstitial ?: '')
+        cafeAds.rewarded.each { key, value ->
+            buildConfigField 'String', 'ADMOB_REWARDED_' + key.toUpperCase(Locale.ROOT), '"' + value + '"'
+        }
+        buildConfigField 'String', 'BILLING_PRODUCT_ID', groovy.json.JsonOutput.toJson(cafeBilling.productId)
+        buildConfigField 'String', 'BILLING_NO_ADS_PRODUCT_ID', groovy.json.JsonOutput.toJson(cafeBilling.noAdsProductId ?: 'lifetime_no_ads')
+        buildConfigField 'String', 'BILLING_NO_ADS_VERIFICATION_URL', groovy.json.JsonOutput.toJson(cafeBilling.noAdsVerificationUrl ?: '')
+        buildConfigField 'String', 'BILLING_DIAMOND_VERIFICATION_URL', groovy.json.JsonOutput.toJson(cafeBilling.diamondVerificationUrl ?: '')
+        buildConfigField 'String', 'BILLING_VERIFICATION_URL', groovy.json.JsonOutput.toJson(cafeBilling.verificationUrl)
+        buildConfigField 'String', 'BILLING_PUBLIC_KEY', groovy.json.JsonOutput.toJson(cafeBilling.verificationPublicKey)
+        buildConfigField 'boolean', 'PLAY_GAMES_CONFIGURED', molaGamesConfigured.toString()
+        resValue 'string', 'mola_games_project_id', molaGames.projectId ?: '0'
+        resValue 'string', 'mola_leaderboard_id', molaGames.leaderboardId ?: ''
+        versionCode 13
+        versionName "1.1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    signingConfigs {
+        release {
+            if (cafeSigningFile.exists()) {
+                storeFile file(cafeSigning.getProperty('storeFile'))
+                storePassword cafeSigning.getProperty('storePassword')
+                keyAlias cafeSigning.getProperty('keyAlias')
+                keyPassword cafeSigning.getProperty('keyPassword')
+            }
+        }
+    }
+    buildTypes {
+        debug {
+            buildConfigField 'boolean', 'ADMOB_TEST', 'true'
+            manifestPlaceholders = [admobAppId: cafeSampleApp]
+            buildConfigField 'String', 'ADMOB_APP_ID', '"' + cafeSampleApp + '"'
+            buildConfigField 'String', 'ADMOB_INTERSTITIAL', groovy.json.JsonOutput.toJson(cafeSampleInterstitial)
+            cafeAds.rewarded.each { key, value ->
+                buildConfigField 'String', 'ADMOB_REWARDED_' + key.toUpperCase(Locale.ROOT), '"' + cafeSampleReward + '"'
+            }
+        }
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        // Initial Play Console upload only. Never distribute this variant as a release.
+        playDraft {
+            initWith release
+            matchingFallbacks = ['release']
+            versionNameSuffix '-draft'
+            buildConfigField 'boolean', 'ADMOB_TEST', 'true'
+            manifestPlaceholders = [admobAppId: cafeSampleApp]
+            buildConfigField 'String', 'ADMOB_APP_ID', groovy.json.JsonOutput.toJson(cafeSampleApp)
+            buildConfigField 'String', 'ADMOB_INTERSTITIAL', groovy.json.JsonOutput.toJson(cafeSampleInterstitial)
+            cafeAds.rewarded.each { key, value ->
+                buildConfigField 'String', 'ADMOB_REWARDED_' + key.toUpperCase(Locale.ROOT), groovy.json.JsonOutput.toJson(cafeSampleReward)
+            }
+            // Explicitly fail closed even if live configuration is subsequently completed.
+            ['BILLING_VERIFICATION_URL', 'BILLING_NO_ADS_VERIFICATION_URL', 'BILLING_DIAMOND_VERIFICATION_URL', 'BILLING_PUBLIC_KEY'].each { key ->
+                buildConfigField 'String', key, '""'
+            }
+        }
+    }
+}
+
+tasks.configureEach {
+    if (name == 'prePlayDraftBuild') doFirst {
+        if (!cafeSigningFile.exists()) throw new GradleException('Draft upload signing credentials missing.')
+    }
+    if (name == 'preReleaseBuild') doFirst {
+        if (molaReviewDigest.isEmpty()) throw new GradleException('Review access credential missing. Configure MOLA_REVIEW_ACCESS_PROPERTIES before release.')
+        if (!molaGamesConfigured) throw new GradleException('Mola Play Games project/leaderboard configuration missing. Complete play-games.config.json before release.')
+        if (!(cafeAds.appId ==~ /ca-app-pub-(?!3940256099942544)\d{16}~\d{10}/) || !(cafeAds.interstitial ==~ /ca-app-pub-(?!3940256099942544)\d{16}\/\d{10}/) || !['coins','tips','stock'].every { cafeAds.rewarded[it] ==~ /ca-app-pub-(?!3940256099942544)\d{16}\/\d{10}/ }) throw new GradleException('Production AdMob app/rewarded/interstitial IDs missing or using sample units. Complete admob.config.json before release.')
+        if (cafeBilling.noAdsProductId != 'lifetime_no_ads' || !(cafeBilling.noAdsVerificationUrl ?: '').startsWith('https://')) throw new GradleException('No-ads purchase verification service missing. Complete billing.config.json before release.')
+        if (!(cafeBilling.diamondVerificationUrl ?: '').startsWith('https://')) throw new GradleException('Diamond purchase verification service missing. Complete billing.config.json before release.')
+        if (!cafeBilling.verificationUrl.startsWith('https://') || cafeBilling.verificationPublicKey.isEmpty()) throw new GradleException('Paid offline verification service/public key missing. Complete billing.config.json before release.')
+        if (!cafeSigningFile.exists()) throw new GradleException('Release signing credentials missing. Set CAFE_SIGNING_PROPERTIES to the private properties file.')
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation "com.google.android.gms:play-services-games-v2:22.0.0"
+    implementation "com.android.billingclient:billing:9.1.0"
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}

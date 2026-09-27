@@ -1,0 +1,40 @@
+{
+  "productId": "offline_cafe_manager",
+  "verificationUrl": "https://example.com/mola-api/v1/offline/verify",
+  "verificationPublicKey": "",
+  "noAdsProductId": "lifetime_no_ads",
+  "noAdsVerificationUrl": "https://example.com/mola-api/v1/no-ads/verify",
+  "noAdsTargetPrice": {
+    "currency": "USD",
+    "amount": "1.99"
+  },
+  "noAdsBonusGold": 50000,
+  "noAdsGrantsOffline": true,
+  "diamondVerificationUrl": "https://example.com/mola-api/v1/diamonds/verify",
+  "diamondProducts": [
+    {
+      "productId": "diamonds_100",
+      "amount": 100,
+      "currency": "USD",
+      "targetPrice": "1.49"
+    },
+    {
+      "productId": "diamonds_500",
+      "amount": 500,
+      "currency": "USD",
+      "targetPrice": "3.99"
+    },
+    {
+      "productId": "diamonds_5000",
+      "amount": 5000,
+      "currency": "USD",
+      "targetPrice": "6.99"
+    },
+    {
+      "productId": "diamonds_10000",
+      "amount": 10000,
+      "currency": "USD",
+      "targetPrice": "9.99"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+node_modules/
+dist/
+dist-*/
+android/.gradle/
+android/local.properties
+android/**/build/
+android/app/src/main/assets/public/
+android/signing.properties
+.env*
+*.jks
+*.keystore
+*.p12
+*.pem
+test-results/
+artifacts/
+.venv/
+__pycache__/
